@@ -1,0 +1,42 @@
+/* ==========================================================================
+   wedding.css — Wedding page only  (events/wedding.html)
+   Ivory, blush and gold. Elegant serif heading inside a thin gold frame.
+   ========================================================================== */
+body.page-wedding {
+  --primary: #3b2d22;
+  --accent: #c9972b;
+  --accent-2: #c9838f;
+  --secondary: #9c7a4d;
+  --gold: #c9972b;
+  --background: #fffaf4;
+  --cream: #fbf1e6;
+  --lavender: #f3e6d8;
+  --pink: #f6dfe0;
+  --peach: #f7e3cf;
+  --yellow: #f8ecc8;
+  --grad-accent: linear-gradient(120deg, #b8862b 0%, #d59aa3 50%, #9c7a4d 100%);
+  --grad-cool: linear-gradient(135deg, #f8ecd9 0%, #f6dfe0 55%, #efe0cf 100%);
+  --shadow-color: 0 24px 50px -18px rgba(201, 151, 43, 0.45);
+}
+
+/* Header: soft ivory wash, script-like serif title, gold double frame */
+.page-wedding .event-hero::before { background: linear-gradient(180deg, rgba(255, 250, 244, 0.62), rgba(255, 250, 244, 0.3) 55%, rgba(255, 250, 244, 0.15)); }
+.page-wedding .event-hero__title {
+  font-family: "Cormorant Garamond", "Georgia", serif;
+  font-weight: 600; font-style: italic;
+  letter-spacing: -0.01em;
+  color: #3b2d22;
+}
+.page-wedding .event-hero__title .text-gradient { font-family: "Great Vibes", cursive; font-style: normal; font-weight: 400; padding-right: 0.15em; }
+.page-wedding .event-hero__text { font-family: "Cormorant Garamond", serif; font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem); font-weight: 600; opacity: 0.9; }
+.page-wedding .event-hero__fx::after {
+  content: ""; position: absolute;
+  inset: calc(var(--header-h) + 14px) clamp(12px, 3vw, 44px) clamp(40px, 5vw, 70px);
+  border: 1px solid rgba(201, 151, 43, 0.65);
+  border-radius: clamp(18px, 2vw, 30px);
+  box-shadow: inset 0 0 0 6px rgba(255, 255, 255, 0.25), inset 0 0 0 7px rgba(201, 151, 43, 0.35);
+  pointer-events: none;
+}
+.page-wedding .stat-pill .icon, .page-wedding .breadcrumb [aria-current] { color: #9c7a4d; }
+.page-wedding .poster-card__cat { color: #9c7a4d; }
+.page-wedding .section-title, .page-wedding .mini-cta h2 { font-family: "Cormorant Garamond", serif; font-weight: 700; }

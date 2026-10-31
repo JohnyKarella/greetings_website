@@ -1,0 +1,47 @@
+/* ==========================================================================
+   festivals.css — Festivals page only  (events/festivals.html)
+   Warm saffron and gold on a deep evening header, with a lamp glow.
+   ========================================================================== */
+body.page-festivals {
+  --primary: #3a1f0b;
+  --accent: #ffb938;
+  --accent-2: #f76707;
+  --secondary: #c2255c;
+  --gold: #f59e0b;
+  --background: #fffaf0;
+  --cream: #fff0d6;
+  --lavender: #ffe3b3;
+  --pink: #ffd3b0;
+  --peach: #ffe6c7;
+  --yellow: #ffe9a8;
+  --grad-accent: linear-gradient(120deg, #ffb938 0%, #f76707 50%, #c2255c 100%);
+  --grad-cool: linear-gradient(135deg, #fff0cf 0%, #ffdcb5 55%, #ffd0c0 100%);
+  --shadow-color: 0 24px 50px -18px rgba(247, 103, 7, 0.5);
+}
+
+/* Dark photo header: light text */
+.page-festivals .event-hero::before { background: linear-gradient(180deg, rgba(24, 12, 2, 0.62), rgba(40, 18, 4, 0.38) 60%, rgba(60, 26, 6, 0.3)); }
+.page-festivals .event-hero::after { background: linear-gradient(180deg, transparent, rgba(255, 170, 60, 0.28)); }
+.page-festivals .event-hero__title { color: #fff; text-shadow: 0 4px 24px rgba(0, 0, 0, 0.35); }
+.page-festivals .event-hero__text { color: #fff; opacity: 0.92; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35); }
+
+.page-festivals .event-hero__title { text-shadow: 0 0 26px rgba(255, 185, 56, 0.55), 0 4px 24px rgba(0, 0, 0, 0.4); }
+.page-festivals .event-hero__title .text-gradient {
+  background: linear-gradient(120deg, #ffe08a, #ffb938 45%, #ff7a3d);
+  -webkit-background-clip: text; background-clip: text;
+}
+/* warm lamp glow rising from the bottom of the header */
+.page-festivals .event-hero__fx::after {
+  content: ""; position: absolute; inset: auto 0 0 0; height: 60%;
+  background:
+    radial-gradient(ellipse at 20% 100%, rgba(255, 170, 40, 0.55), transparent 55%),
+    radial-gradient(ellipse at 80% 100%, rgba(255, 120, 40, 0.45), transparent 55%),
+    radial-gradient(ellipse at 50% 100%, rgba(255, 210, 100, 0.4), transparent 60%);
+  mix-blend-mode: screen;
+  animation: festival-glow 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes festival-glow { 0%, 100% { opacity: 0.75; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .page-festivals .event-hero__fx::after { animation-duration: 4.5s !important; animation-iteration-count: infinite !important; }
+}

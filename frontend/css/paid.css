@@ -1,0 +1,651 @@
+/* ==========================================================================
+   paid.css — paid logo change (payment window + notes in Poster Studio)
+   Uses the design tokens from style.css.  Logic: js/paid.js
+   ========================================================================== */
+
+/* ---------------- Note inside the Logo tab of Poster Studio ---------------- */
+.pe-paid {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: 16px;
+  background: var(--cream);
+  border: 1px solid rgba(232, 170, 40, 0.35);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.pe-paid strong {
+  display: block;
+  color: var(--text);
+  font-size: 0.92rem;
+}
+
+.pe-paid__tag {
+  flex-shrink: 0;
+  padding: 0.28rem 0.6rem;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.pe-paid.is-paid {
+  background: var(--green);
+  border-color: rgba(42, 157, 143, 0.35);
+}
+
+.pe-paid.is-paid .pe-paid__tag {
+  background: #2a9d8f;
+}
+
+/* ---------------- Payment window ---------------- */
+.lp {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.lp.is-open {
+  display: flex;
+}
+
+.lp__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(31, 26, 46, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.lp__card {
+  position: relative;
+  width: min(460px, 100%);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  padding: 1.5rem 1.4rem 1.2rem;
+  border-radius: 26px;
+  background: var(--surface);
+  box-shadow: 0 30px 80px rgba(31, 26, 46, 0.35);
+  font-family: var(--font-body);
+  color: var(--text);
+  animation: lp-in 0.3s ease both;
+}
+
+@keyframes lp-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp__card { animation: none; }
+}
+
+.lp__x {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(31, 26, 46, 0.06);
+  cursor: pointer;
+}
+
+.lp__x svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.lp__head {
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+  padding-right: 2.4rem;
+  margin-bottom: 1.1rem;
+}
+
+.lp__thumb {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid var(--border-strong);
+  background: #fff;
+}
+
+.lp__thumb img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.lp__price {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  background: var(--yellow);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.lp__head h2 {
+  margin: 0.45rem 0 0.25rem;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  line-height: 1.2;
+}
+
+.lp__head p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.lp__steps {
+  list-style: none;
+  counter-reset: lp;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.9rem;
+}
+
+.lp__steps > li {
+  counter-increment: lp;
+  position: relative;
+  padding: 0.9rem 0.9rem 0.9rem 3rem;
+  border-radius: 18px;
+  background: var(--background);
+  border: 1px solid var(--border);
+}
+
+.lp__steps > li::before {
+  content: counter(lp);
+  position: absolute;
+  left: 0.85rem;
+  top: 0.85rem;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.lp__step-title {
+  display: block;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.lp__upi {
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+}
+
+.lp__qr {
+  flex-shrink: 0;
+  width: 132px;
+  height: 132px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--border-strong);
+  display: grid;
+  place-items: center;
+}
+
+.lp__qr svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.lp__qr-fail {
+  margin: 0;
+  padding: 0.5rem;
+  font-size: 0.78rem;
+  text-align: center;
+  word-break: break-all;
+}
+
+.lp__upi-side {
+  min-width: 0;
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.lp__upi-side p {
+  margin: 0;
+}
+
+/* "Open UPI app" only helps on a phone */
+.lp__app {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .lp__app { display: inline-flex; }
+}
+
+.lp__copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 100%;
+  padding: 0.35rem 0.6rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 0.82rem;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.lp__copy span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.lp__copy small {
+  color: var(--secondary);
+  font-weight: 700;
+}
+
+.lp__small {
+  margin: 0 0 0.6rem;
+  font-size: 0.8rem;
+  color: var(--text-soft);
+}
+
+.lp__ref {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lp__ref input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.65rem 0.8rem;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 12px;
+  font: inherit;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  background: #fff;
+  color: var(--text);
+}
+
+.lp__ref input:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 4px rgba(124, 92, 230, 0.15);
+}
+
+.lp__ref .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.lp__error {
+  margin: 0.5rem 0 0;
+  min-height: 1.1em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #c8372d;
+}
+
+.lp__error:empty {
+  display: none;
+}
+
+.lp__pay {
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 0.6rem;
+}
+
+.lp__notready {
+  margin: 0 0 0.6rem;
+  padding: 0.9rem;
+  border-radius: 16px;
+  background: var(--cream);
+  font-size: 0.92rem;
+}
+
+.lp__help {
+  margin: 0.8rem 0 0;
+  font-size: 0.82rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.lp__help a {
+  color: var(--secondary);
+  font-weight: 700;
+}
+
+.lp__cancel {
+  display: block;
+  width: 100%;
+  margin-top: 0.9rem;
+  padding: 0.6rem;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 12px;
+}
+
+.lp__cancel:hover {
+  background: rgba(31, 26, 46, 0.05);
+  color: var(--text);
+}
+
+.lp__x:focus-visible,
+.lp__cancel:focus-visible,
+.lp__copy:focus-visible {
+  outline: 3px solid rgba(124, 92, 230, 0.5);
+  outline-offset: 2px;
+}
+
+@media (max-width: 420px) {
+  .lp__card { padding: 1.2rem 1rem 1rem; border-radius: 22px; }
+  .lp__upi { flex-direction: column; align-items: flex-start; }
+  .lp__steps > li { padding-left: 2.7rem; }
+  .lp__ref { flex-direction: column; }
+}
+
+/* ==========================================================================
+   FEE IN THE EDIT PREVIEW AREA
+   ========================================================================== */
+
+/* Row under the poster: "Live preview" + "Logo change ₹15 · Pay" */
+.pe__dock {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  z-index: 3;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0 8px;
+  pointer-events: none;
+}
+
+.pe__dock > * {
+  pointer-events: auto;
+}
+
+.pe__dock .pe__live {
+  position: static;
+  transform: none;
+  flex-shrink: 0;
+}
+
+.pe__paybar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0.2rem 0.22rem 0.2rem 0.8rem;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid rgba(232, 170, 40, 0.55);
+  box-shadow: var(--shadow);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.pe__paybar:empty {
+  display: none;
+}
+
+.pe__paybar b {
+  font-weight: 800;
+}
+
+.pe[data-logo="credit"] .pe__paybar,
+.pe[data-logo="paid"] .pe__paybar {
+  border-color: rgba(42, 157, 143, 0.5);
+}
+
+.pe[data-logo="credit"] .pe__paybar b,
+.pe[data-logo="paid"] .pe__paybar b {
+  color: #1d7d72;
+}
+
+/* the Pay button (preview bar + Logo tab) */
+.pe-pay {
+  flex-shrink: 0;
+  min-height: 30px;
+  padding: 0.3rem 0.85rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #1f1a2e;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.pe-pay:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.pe-pay:focus-visible {
+  outline: 3px solid rgba(124, 92, 230, 0.55);
+  outline-offset: 2px;
+}
+
+.pe[data-logo="credit"] .pe-pay {
+  background: #2a9d8f;
+  color: #fff;
+}
+
+.pe-paid .pe-pay {
+  display: block;
+  margin-top: 0.55rem;
+  min-height: 36px;
+  font-size: 0.84rem;
+}
+
+/* Fee tag on the logo itself, inside the preview (never part of the download) */
+.pe[data-logo="locked"] .pe__canvas-wrap .poster__logo {
+  cursor: pointer;
+  outline: 0.5cqw dashed var(--gold);
+  outline-offset: 0.7cqw;
+}
+
+.pe[data-logo="locked"] .pe__canvas-wrap .poster__logo::after {
+  content: attr(data-fee);
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 1.6cqw);
+  transform: translateX(-50%);
+  padding: 0.5cqw 1.6cqw;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #1f1a2e;
+  font: 800 max(2.5cqw, 9px) / 1.3 var(--font-body);
+  letter-spacing: 0;
+  white-space: nowrap;
+  box-shadow: 0 0.6cqw 1.6cqw rgba(31, 26, 46, 0.28);
+  pointer-events: none;
+}
+
+/* phone full-screen view shows the clean poster only */
+.pe.is-full .pe__dock,
+.pe.is-full .pe__canvas-wrap .poster__logo::after {
+  display: none;
+}
+
+.pe.is-full .pe__canvas-wrap .poster__logo {
+  outline: 0;
+}
+
+@media (max-width: 900px) {
+  .pe__stage { padding-bottom: 3.1rem; }   /* room for the pay bar under the poster */
+  .pe__dock { bottom: 6px; gap: 0.35rem; }
+  .pe__paybar { font-size: 0.74rem; padding-left: 0.65rem; }
+  .pe-pay { font-size: 0.74rem; padding-inline: 0.7rem; }
+}
+
+/* small phones: the pay bar takes the place of the "Live preview" pill */
+@media (max-width: 480px) {
+  .pe__dock .pe__paybar:not(:empty) ~ .pe__live,
+  .pe__dock:has(.pe__paybar:not(:empty)) .pe__live { display: none; }
+}
+
+/* ==========================================================================
+   UPI METHOD CHOOSER (payment window)
+   ========================================================================== */
+.lp__test {
+  margin: 0 0 0.9rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 12px;
+  background: #fff1d6;
+  border: 1px dashed #d99a1c;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #6b4a00;
+}
+
+.lp__test code {
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.lp__methods {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+}
+
+.lp__method {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  min-height: 84px;
+  padding: 0.7rem 0.3rem 0.6rem;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 16px;
+  background: #fff;
+  font: inherit;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.lp__method:hover {
+  transform: translateY(-2px);
+  border-color: var(--secondary);
+}
+
+.lp__method.is-on {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(124, 92, 230, 0.2);
+  background: #fbf9ff;
+}
+
+.lp__method:focus-visible {
+  outline: 3px solid rgba(124, 92, 230, 0.55);
+  outline-offset: 2px;
+}
+
+.lp__method-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--c, #1f1a2e);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.lp__method-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.lp__pane[hidden],
+.lp__app[hidden] {
+  display: none !important;
+}
+
+.lp__app {
+  white-space: nowrap;
+}
+
+/* phones: the window slides up from the bottom */
+@media (max-width: 560px) {
+  .lp { padding: 0; align-items: flex-end; }
+  .lp__card {
+    width: 100%;
+    max-height: 92dvh;
+    border-radius: 24px 24px 0 0;
+    padding: 1.2rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
+  }
+  .lp__head h2 { font-size: 1.25rem; }
+}
+
+@media (max-width: 340px) {
+  .lp__methods { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lp__thumb { width: 52px; height: 52px; }
+}
+
+/* short, wide screens (phone held sideways) */
+@media (max-height: 520px) and (min-width: 561px) {
+  .lp__card { width: min(720px, 100%); }
+  .lp__methods { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}

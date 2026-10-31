@@ -1,0 +1,432 @@
+/* ==========================================================================
+   home.css  —  Home page (index.html) only
+   Each content section becomes a framed "stage" with its own:
+     • texture background (images/textures/…)
+     • glowing frame edge
+     • perspective grid (ceiling + floor)
+     • floating side cards that fill the empty left / right space
+   Every section's background is a separate block below — edit one without
+   touching the others.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   SHARED STAGE
+   -------------------------------------------------------------------------- */
+.sec-stage {
+  --glow: 255, 150, 170;               /* frame glow colour (R, G, B) */
+  --base: #fff7f0;                     /* colour under the texture   */
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin: clamp(12px, 1.6vw, 24px) clamp(8px, 1.2vw, 18px);
+  border-radius: clamp(26px, 3vw, 46px);
+  background: var(--base);
+}
+.sec-stage > .container { position: relative; z-index: 2; }
+
+.sec-bg {
+  position: absolute; inset: 0; z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+}
+.sec-bg__texture {
+  position: absolute; inset: -4%;
+  background-size: cover;
+  background-position: center;
+  animation: sec-texture-drift 40s ease-in-out infinite alternate;
+}
+@keyframes sec-texture-drift {
+  from { transform: scale(1.02) translate(0, 0); }
+  to   { transform: scale(1.1) translate(-2%, 1.5%); }
+}
+
+/* Perspective grid — like a stage floor and ceiling */
+.sec-bg__grid {
+  position: absolute; left: -25%; right: -25%;
+  height: 48%;
+  background-image:
+    linear-gradient(rgba(var(--glow), 0.38) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--glow), 0.38) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: linear-gradient(to var(--fade, bottom), transparent 0%, #000 75%);
+  mask-image: linear-gradient(to var(--fade, bottom), transparent 0%, #000 75%);
+  opacity: 0.75;
+}
+.sec-bg__grid--bottom {
+  bottom: -6%;
+  transform: perspective(520px) rotateX(58deg);
+  transform-origin: 50% 100%;
+  animation: sec-grid-flow 6s linear infinite;
+}
+.sec-bg__grid--top {
+  top: -6%;
+  --fade: top;
+  transform: perspective(520px) rotateX(-58deg);
+  transform-origin: 50% 0%;
+  opacity: 0.45;
+}
+@keyframes sec-grid-flow { to { background-position: 0 64px, 0 0; } }
+
+/* Glowing frame edge */
+.sec-bg__glow {
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 2px rgba(var(--glow), 0.55),
+    inset 0 0 40px 6px rgba(var(--glow), 0.55),
+    inset 0 0 140px 30px rgba(var(--glow), 0.28);
+  animation: sec-glow-pulse 5s ease-in-out infinite;
+}
+@keyframes sec-glow-pulse {
+  0%, 100% { opacity: 0.85; }
+  50%      { opacity: 1; }
+}
+
+/* --------------------------------------------------------------------------
+   1. OCCASIONS  —  watercolour sky → peach
+   -------------------------------------------------------------------------- */
+.sec-stage--occasions { --glow: 255, 150, 120; --base: #fdf1e8; }
+.sec-bg--occasions .sec-bg__texture {
+  background-image: url("../images/textures/texture-watercolor.jpg");
+  opacity: 0.9;
+}
+
+/* --------------------------------------------------------------------------
+   2. TRENDING NOW  —  soft diagonal light stripes
+   -------------------------------------------------------------------------- */
+.sec-stage--trending { --glow: 255, 186, 90; --base: #fff6ea; }
+.sec-stage--trending.trending { background: var(--base); }   /* replaces the old gradient */
+.sec-bg--trending .sec-bg__texture {
+  background-image: url("../images/textures/texture-light-stripes.jpg");
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   3. PERSONALIZE  —  brush-stroke parchment
+   -------------------------------------------------------------------------- */
+.sec-stage--create { --glow: 186, 150, 255; --base: #faf3e6; }
+.sec-bg--create .sec-bg__texture {
+  background-image: url("../images/textures/texture-brush-parchment.jpg");
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   4. HOW IT WORKS  —  watercolour, flipped and cooled
+   -------------------------------------------------------------------------- */
+.sec-stage--how { --glow: 110, 200, 220; --base: #eef8f8; padding-top: var(--section-space); }
+.sec-bg--how .sec-bg__texture {
+  background-image: url("../images/textures/texture-watercolor.jpg");
+  transform-origin: center;
+  filter: hue-rotate(-28deg) saturate(0.9);
+  scale: 1 -1;                          /* flipped: peach on top, blue below */
+  opacity: 0.8;
+}
+
+/* --------------------------------------------------------------------------
+   SIDE ELEMENTS  —  floating cards in the empty left / right space
+   -------------------------------------------------------------------------- */
+.sec-side {
+  position: absolute; z-index: 1;
+  /* fills the empty gutter beside the content, never wider than 270px */
+  width: clamp(170px, calc((100vw - var(--container)) / 2 - 60px), 270px);
+  display: none;                        /* shown on wide screens (see bottom) */
+  flex-direction: column; gap: 14px;
+  pointer-events: none;
+}
+.sec-side--left  { right: calc(50% + var(--container) / 2 - 18px); top: 22%; align-items: flex-end; }
+.sec-side--right { left:  calc(50% + var(--container) / 2 - 18px); top: 46%; align-items: flex-start; }
+
+.side-card {
+  width: 100%;
+  padding: 14px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 24px 50px -22px rgba(31, 26, 46, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  color: var(--text);
+  animation: side-float var(--sd, 7s) ease-in-out var(--sdelay, 0s) infinite;
+}
+.side-card--tilt-l { rotate: -4deg; }
+.side-card--tilt-r { rotate: 4deg; --sd: 8s; --sdelay: -3s; }
+@keyframes side-float {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 -14px; }
+}
+.side-card__head {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 0 12px;
+  font-weight: 800; font-size: 0.92rem;
+}
+.side-card__head .icon { width: 18px; height: 18px; color: var(--accent-2); }
+.side-card__meta { margin-left: auto; font-size: 0.75rem; font-weight: 700; color: var(--text-soft); }
+
+.side-list { display: grid; gap: 8px; }
+.side-list li {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  font-size: 0.86rem; font-weight: 600;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+}
+.side-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 22%, transparent); }
+.side-chip { margin-left: auto; padding: 2px 8px; font-size: 0.72rem; font-weight: 700; background: var(--cream); border-radius: 999px; }
+
+.side-person { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.side-person img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; }
+.side-person strong, .side-file strong { display: block; font-size: 0.88rem; }
+.side-person small, .side-file small { display: block; font-size: 0.74rem; color: var(--text-soft); }
+
+.side-thumbs { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6px; }
+.side-thumbs img { width: 100%; height: 74px; object-fit: cover; border-radius: 10px; }
+
+.side-stack { position: relative; height: 150px; margin: 0 0 10px; }
+.side-stack img {
+  position: absolute; top: 0;
+  width: 58%; height: 100%; object-fit: cover;
+  border-radius: 14px; border: 3px solid #fff;
+  box-shadow: 0 10px 20px -10px rgba(31, 26, 46, 0.45);
+}
+.side-stack img:nth-child(1) { left: 0; rotate: -8deg; }
+.side-stack img:nth-child(2) { left: 21%; z-index: 2; }
+.side-stack img:nth-child(3) { right: 0; rotate: 8deg; }
+.side-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; font-size: 0.8rem; font-weight: 700;
+  background: var(--primary); color: #fff; border-radius: 999px;
+}
+.side-badge .icon { width: 15px; height: 15px; }
+
+.side-file { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.side-file img { width: 46px; height: 58px; object-fit: cover; border-radius: 8px; }
+.side-progress { height: 6px; border-radius: 6px; background: rgba(31, 26, 46, 0.08); overflow: hidden; }
+.side-progress i { display: block; height: 100%; width: 100%; border-radius: inherit; background: var(--grad-accent); animation: side-fill 3.4s ease-in-out infinite; }
+@keyframes side-fill { 0% { width: 6%; } 70%, 100% { width: 100%; } }
+
+.side-fonts { display: grid; gap: 6px; }
+.side-fonts li { padding: 7px 10px; font-size: 1.15rem; line-height: 1.2; background: rgba(255, 255, 255, 0.75); border-radius: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.side-fonts li:first-child { outline: 2px solid var(--secondary); }
+
+.side-swatches { display: flex; gap: 8px; margin-bottom: 12px; }
+.side-swatches i { width: 30px; height: 30px; border-radius: 50%; background: var(--c); border: 3px solid #fff; box-shadow: 0 4px 10px -4px rgba(31, 26, 46, 0.4); }
+.side-swatches i:first-child { outline: 2px solid var(--c); outline-offset: 2px; }
+.side-drop { display: flex; align-items: center; gap: 8px; padding: 14px; font-size: 0.84rem; font-weight: 700; color: var(--text-muted); border: 2px dashed rgba(124, 92, 230, 0.45); border-radius: 14px; background: rgba(255, 255, 255, 0.55); }
+.side-drop .icon { width: 20px; height: 20px; color: var(--secondary); }
+
+.side-steps { display: grid; gap: 8px; counter-reset: s; }
+.side-steps li { display: flex; align-items: center; gap: 10px; font-size: 0.86rem; font-weight: 600; color: var(--text-soft); }
+.side-steps li::before {
+  counter-increment: s; content: counter(s);
+  display: grid; place-items: center; width: 24px; height: 24px; flex-shrink: 0;
+  font-size: 0.75rem; font-weight: 800; border-radius: 50%;
+  background: rgba(31, 26, 46, 0.08); color: var(--text-muted);
+}
+.side-steps li.is-done { color: var(--text); }
+.side-steps li.is-done::before { content: "✓"; background: #2ec4b6; color: #fff; }
+
+.side-share { display: flex; gap: 10px; }
+.side-share span { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: var(--c); color: #fff; box-shadow: 0 8px 16px -8px var(--c); }
+.side-share .icon { width: 20px; height: 20px; }
+
+/* Floating pills ("cursor" labels like a live editor) */
+.side-pill {
+  position: relative;
+  display: inline-flex; align-items: center;
+  padding: 10px 18px;
+  font-weight: 800; font-size: 0.9rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 14px 28px -14px rgba(31, 26, 46, 0.45);
+  animation: side-float 6s ease-in-out -2s infinite;
+}
+.side-pill--light { background: #fff; color: var(--text); }
+.side-pill--accent { background: var(--grad-accent); color: #fff; }
+.side-pill--cursor::before {               /* little arrow cursor */
+  content: ""; position: absolute; left: -16px; top: -16px;
+  width: 22px; height: 22px;
+  background: #fff;
+  clip-path: polygon(0 0, 100% 45%, 52% 55%, 40% 100%);
+  filter: drop-shadow(0 3px 4px rgba(31, 26, 46, 0.3));
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE
+   -------------------------------------------------------------------------- */
+/* Side cards only where there is real empty space beside the content */
+@media (min-width: 1880px) {
+  .sec-side { display: flex; }
+}
+@media (min-width: 1880px) and (max-width: 1980px) {
+  .side-card { padding: 12px; }
+  .side-card__head { font-size: 0.85rem; }
+  .side-fonts li { font-size: 1rem; }
+}
+
+@media (max-width: 1024px) {
+  .sec-bg__grid { background-size: 48px 48px; }
+  .sec-bg__glow {
+    box-shadow:
+      inset 0 0 0 2px rgba(var(--glow), 0.5),
+      inset 0 0 30px 4px rgba(var(--glow), 0.5),
+      inset 0 0 90px 20px rgba(var(--glow), 0.22);
+  }
+}
+@media (max-width: 640px) {
+  .sec-stage { margin: 10px 6px; border-radius: 24px; }
+  .sec-bg__grid { height: 36%; background-size: 36px 36px; }
+  .sec-bg__grid--top { display: none; }
+}
+
+/* Keep the gentle motion even when "animation effects" are turned off */
+@media (prefers-reduced-motion: reduce) {
+  .sec-bg__texture { animation-duration: 40s !important; animation-iteration-count: infinite !important; }
+  .sec-bg__grid--bottom { animation-duration: 6s !important; animation-iteration-count: infinite !important; }
+  .side-card, .side-pill { animation-duration: var(--sd, 7s) !important; animation-iteration-count: infinite !important; }
+}
+
+/* ==========================================================================
+   PARTY DECORATIONS  —  fill the empty left / right space of each section
+   (balloons, gifts, party popper, cake, envelope, fairy lights, streamers,
+   real-photo polaroids). Markup lives in index.html inside each section:
+     .dz-col     tall column beside the content     (screens 1560 – 1879 px)
+     .dz-corner  small pieces in the top corners     (every other screen size)
+   Polaroid photos come from images/photos/ — change the src to swap them.
+   ========================================================================== */
+.dz-col, .dz-corner { position: absolute; z-index: 1; pointer-events: none; }
+.dz-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* ---------- Tall gutter columns ---------- */
+.dz-col {
+  top: 0; bottom: 0;
+  width: clamp(110px, calc((100vw - var(--container)) / 2 - 40px), 240px);
+  display: none;
+}
+.dz-col--left  { right: calc(50% + var(--container) / 2 - 14px); }
+.dz-col--right { left:  calc(50% + var(--container) / 2 - 14px); }
+.dz-item { position: absolute; left: 0; right: 0; }
+.dz-item > * { margin-inline: auto; }
+.dz-balloons  { width: 92%; }
+.dz-gift      { width: 70%; }
+.dz-small .dz-gift { width: 48%; }
+.dz-popper    { width: 86%; }
+.dz-cake      { width: 92%; }
+.dz-envelope  { width: 96%; }
+.dz-lights    { width: 62%; }
+.dz-streamer  { width: 42%; }
+.dz-tiny .dz-star { width: 24%; }
+.dz-polaroid  { width: 84%; }
+.dz-hang      { top: 0 !important; }
+
+@media (min-width: 1560px) and (max-width: 1599px), (min-width: 1640px) and (max-width: 1879px) {
+  .dz-col { display: block; }
+  .dz-corner { display: none; }
+}
+
+/* ---------- Corner pieces (sit in the empty band above each heading) ---------- */
+.dz-corner {
+  top: clamp(8px, 1.2vw, 18px);
+  height: clamp(54px, calc(var(--section-space) - 22px), 112px);
+  display: flex; align-items: flex-start; gap: 6px;
+}
+.dz-corner--l { left: clamp(14px, 3vw, 46px); }
+.dz-corner--r { right: clamp(14px, 3vw, 46px); }
+.dz-corner .dz-svg { width: auto; height: 100%; }
+.dz-corner .dz-lights { height: 100%; }
+.sec-stage--how .dz-corner { top: clamp(8px, 1vw, 14px); }
+
+/* ---------- Polaroid photos ---------- */
+.dz-polaroid {
+  position: relative;
+  margin: 0;
+  padding: 8px 8px 0;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 20px 32px -16px rgba(31, 26, 46, 0.5), 0 2px 6px rgba(31, 26, 46, 0.12);
+  rotate: var(--r, 0deg);
+  transform-origin: 50% 0;
+  animation: dz-swing 6.5s ease-in-out var(--dl, 0s) infinite;
+}
+.dz-polaroid img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 2px; filter: saturate(1.05) contrast(1.02); }
+.dz-polaroid figcaption {
+  padding: 6px 2px 10px;
+  font-family: "Caveat", cursive; font-weight: 700;
+  font-size: clamp(0.95rem, 0.8vw + 0.5rem, 1.25rem);
+  text-align: center; color: #4a4160;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dz-tape {
+  position: absolute; top: -10px; left: 50%;
+  width: 46%; height: 20px;
+  translate: -50% 0; rotate: -4deg;
+  background: rgba(255, 233, 160, 0.78);
+  box-shadow: 0 1px 2px rgba(31, 26, 46, 0.12);
+}
+
+/* ---------- Motion ---------- */
+@keyframes dz-swing { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+@keyframes dz-bob   { 0%, 100% { translate: 0 0; } 50% { translate: 0 -14px; } }
+@keyframes dz-sway  { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+@keyframes dz-hop {
+  0%, 68%, 100% { transform: translateY(0); }
+  76% { transform: translateY(-9px); }
+  84% { transform: translateY(0); }
+  90% { transform: translateY(-3px); }
+}
+@keyframes dz-lid { 0%, 68%, 92%, 100% { transform: translateY(0) rotate(0); } 76% { transform: translateY(-7px) rotate(-5deg); } }
+@keyframes dz-burst {
+  0%   { transform: translate(0, 0) rotate(0) scale(0.3); opacity: 0; }
+  8%   { opacity: 1; }
+  70%  { transform: translate(var(--tx), var(--ty)) rotate(var(--r)) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), calc(var(--ty) + 34px)) rotate(var(--r)) scale(1); opacity: 0; }
+}
+@keyframes dz-flicker {
+  0%, 100% { transform: scale(1, 1) skewX(0); }
+  25% { transform: scale(0.92, 1.08) skewX(3deg); }
+  50% { transform: scale(1.05, 0.94) skewX(-2deg); }
+  75% { transform: scale(0.96, 1.05) skewX(2deg); }
+}
+@keyframes dz-glow   { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+@keyframes dz-card   { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
+@keyframes dz-twinkle-bulb { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+@keyframes dz-star   { 0%, 100% { transform: scale(0.7) rotate(0); opacity: 0.6; } 50% { transform: scale(1.1) rotate(25deg); opacity: 1; } }
+@keyframes dz-stream { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+
+.dz-balloons { animation: dz-bob 7s ease-in-out infinite; }
+.dz-sway     { animation: dz-sway var(--d, 6s) ease-in-out var(--dl, 0s) infinite; }
+.dz-gift     { animation: dz-hop 4.2s ease-in-out var(--dl, 0s) infinite; }
+.dz-lid      { transform-box: fill-box; transform-origin: 0 100%; animation: dz-lid 4.2s ease-in-out var(--dl, 0s) infinite; }
+.dz-bit      { animation: dz-burst 3.2s cubic-bezier(.2, .7, .3, 1) var(--dl, 0s) infinite; }
+.dz-flame    { animation: dz-flicker 0.9s ease-in-out var(--dl, 0s) infinite; }
+.dz-glow     { animation: dz-glow 1.8s ease-in-out var(--dl, 0s) infinite; }
+.dz-card     { animation: dz-card 4.5s ease-in-out infinite; }
+.dz-bulb     { animation: dz-twinkle-bulb 2.2s ease-in-out var(--dl, 0s) infinite; filter: drop-shadow(0 0 6px var(--c)); }
+.dz-lights   { transform-origin: 50% 0; animation: dz-stream 9s ease-in-out infinite; }
+.dz-streamer { transform-origin: 50% 0; animation: dz-stream 6s ease-in-out infinite; }
+.dz-twinkle  { animation: dz-star 3s ease-in-out infinite; }
+
+/* Keep the motion even when "animation effects" are turned off on the computer */
+@media (prefers-reduced-motion: reduce) {
+  .dz-balloons, .dz-sway, .dz-gift, .dz-lid, .dz-bit, .dz-flame, .dz-glow, .dz-card,
+  .dz-bulb, .dz-lights, .dz-streamer, .dz-twinkle, .dz-polaroid { animation-iteration-count: infinite !important; }
+  .dz-balloons { animation-duration: 7s !important; }
+  .dz-sway { animation-duration: var(--d, 6s) !important; }
+  .dz-gift, .dz-lid { animation-duration: 4.2s !important; }
+  .dz-bit { animation-duration: 3.2s !important; }
+  .dz-flame { animation-duration: 0.9s !important; }
+  .dz-glow, .dz-bulb { animation-duration: 2s !important; }
+  .dz-card { animation-duration: 4.5s !important; }
+  .dz-lights { animation-duration: 9s !important; }
+  .dz-streamer, .dz-polaroid { animation-duration: 6.5s !important; }
+  .dz-twinkle { animation-duration: 3s !important; }
+}
+
+/* Very wide screens (1880 px+): your glass side cards fill the middle, so only
+   the decorations marked .dz-wide show — above and below those cards. */
+@media (min-width: 1880px) {
+  .dz-col { display: block; }
+  .dz-corner { display: none; }
+  .dz-col .dz-item:not(.dz-wide) { display: none; }
+  .dz-wide-sm > * { width: 62% !important; }
+}

@@ -1,0 +1,18 @@
+/* ==========================================================================
+   events.css — All Events page only  (events/events.html)
+   A bright, multi-colour look: this page is the hub for every occasion.
+   ========================================================================== */
+body.page-events {
+  --accent: #ff6b5b;
+  --accent-2: #ec5a8c;
+  --secondary: #7c5ce6;
+  --grad-accent: linear-gradient(120deg, #ff6b5b 0%, #ffb938 33%, #2ec4b6 66%, #7c5ce6 100%);
+  --grad-cool: linear-gradient(135deg, #ffe9c9 0%, #ffd6e4 35%, #d9ecff 70%, #e4dbff 100%);
+}
+.page-events .event-hero::before { background: linear-gradient(180deg, rgba(255, 251, 244, 0.5), rgba(255, 251, 244, 0.25)); }
+.page-events .hero-cat:nth-child(1) { background: #ec5a8c; }
+.page-events .hero-cat:nth-child(2) { background: #b0895a; }
+.page-events .hero-cat:nth-child(3) { background: #d6336c; }
+.page-events .hero-cat:nth-child(4) { background: #f76707; }
+.page-events .hero-cat:nth-child(5) { background: #3a86ff; }
+.page-events .hero-cat:hover { background: var(--primary); }

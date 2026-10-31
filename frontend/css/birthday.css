@@ -1,0 +1,37 @@
+/* ==========================================================================
+   birthday.css — Birthday page only  (events/birthday.html)
+   Page colours + the bunting garlands in the header.
+   Shared styles for all inner pages are in style.css.
+   ========================================================================== */
+body.page-birthday {
+  --accent: #ff6b5b;
+  --accent-2: #ec5a8c;
+  --secondary: #7c5ce6;
+  --grad-accent: linear-gradient(120deg, #ff6b5b 0%, #ec5a8c 45%, #7c5ce6 100%);
+}
+
+/* Swinging bunting garlands in the top corners of the header */
+.event-hero__bunting {
+  position: absolute; inset: 0 0 auto 0; z-index: 0;
+  height: 220px;
+  pointer-events: none;
+}
+.bunting {
+  position: absolute; top: calc(var(--header-h) - 8px);
+  width: min(38%, 520px);
+  height: auto;
+  overflow: visible;
+  transform-origin: 0 0;
+  animation: bunting-swing 6s ease-in-out infinite;
+}
+.bunting--r { right: 0; transform-origin: 50% 0; animation-delay: -3s; }
+.bunting--l { left: 0; }
+.bunting .flag {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: flag-flutter var(--fd, 2.4s) ease-in-out var(--fdelay, 0s) infinite;
+}
+@keyframes bunting-swing { 0%, 100% { rotate: 0deg; } 50% { rotate: 1.6deg; } }
+.bunting--r { animation-name: bunting-swing-r; }
+@keyframes bunting-swing-r { 0%, 100% { rotate: 0deg; } 50% { rotate: -1.6deg; } }
+@keyframes flag-flutter { 0%, 100% { transform: rotate(-4deg) skewX(0deg); } 50% { transform: rotate(5deg) skewX(-6deg); } }

@@ -1,0 +1,36 @@
+/* ==========================================================================
+   anniversary.css — Anniversary page only  (events/anniversary.html)
+   Rose and wine reds. On wide screens the header text sits on the left and
+   the floating posters gather on the right.
+   ========================================================================== */
+body.page-anniversary {
+  --primary: #3d1422;
+  --accent: #ff6b81;
+  --accent-2: #d6336c;
+  --secondary: #8e2443;
+  --gold: #e8a13c;
+  --background: #fff7f8;
+  --cream: #ffe9ee;
+  --lavender: #ffd9e2;
+  --pink: #ffc9d6;
+  --peach: #ffe0d6;
+  --yellow: #ffe6c9;
+  --grad-accent: linear-gradient(120deg, #ff6b81 0%, #d6336c 50%, #8e2443 100%);
+  --grad-cool: linear-gradient(135deg, #ffe0e6 0%, #ffd0dc 50%, #ffe6da 100%);
+  --shadow-color: 0 24px 50px -18px rgba(214, 51, 108, 0.5);
+}
+
+.page-anniversary .event-hero::before { background: linear-gradient(100deg, rgba(255, 247, 248, 0.72) 0%, rgba(255, 247, 248, 0.35) 55%, rgba(255, 247, 248, 0) 100%); }
+.page-anniversary .event-hero__title { color: #5a0f27; }
+.page-anniversary .event-hero__title .text-gradient { font-family: "Great Vibes", cursive; font-style: normal; font-weight: 400; padding-right: 0.15em; }
+
+/* Left-aligned header layout (wide screens only) */
+@media (min-width: 1100px) {
+  .page-anniversary .event-hero__inner { margin-inline: 0; max-width: 640px; text-align: left; }
+  .page-anniversary .event-hero__text { margin-inline: 0; }
+  .page-anniversary .event-hero__stats, .page-anniversary .breadcrumb { justify-content: flex-start; }
+  .page-anniversary .event-hero__peek--l  { left: auto; right: 30%; top: 34%; }
+  .page-anniversary .event-hero__peek--r  { right: 6%; top: 24%; }
+  .page-anniversary .event-hero__peek--l2 { left: auto; right: 20%; top: 14%; }
+  .page-anniversary .event-hero__peek--r2 { right: 17%; bottom: 9%; }
+}

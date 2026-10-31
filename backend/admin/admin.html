@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SBL Admin</title>
+  <link rel="icon" type="image/png" href="/images/icons/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#fffbf4; --card:#fff; --ink:#1f1a2e; --muted:#6b6680; --line:#ece6dc; --accent:#7c5ce6;
+            --ok:#1f8a5b; --okbg:#e3f5ec; --warn:#a86400; --warnbg:#fff1d6; --bad:#c23a3a; --badbg:#fde6e6; --test:#5b5670; --testbg:#efedf5; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 "Plus Jakarta Sans", system-ui, sans-serif; }
+    h1, h2 { font-family: Fraunces, Georgia, serif; margin: 0; }
+    button, input, select { font: inherit; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 16px 60px; }
+    .top { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom: 20px; }
+    .top h1 { font-size: 26px; }
+    .top h1 span { color: var(--accent); }
+    .badge { display:inline-block; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:700; }
+    .btn { border:0; border-radius:999px; padding:9px 16px; background:var(--accent); color:#fff; font-weight:600; cursor:pointer; }
+    .btn.ghost { background:transparent; color:var(--ink); border:1px solid var(--line); }
+    .btn.sm { padding:5px 11px; font-size:13px; }
+    .btn:disabled { opacity:.5; cursor:default; }
+    .tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:18px; }
+    .tabs button { border:1px solid var(--line); background:#fff; border-radius:999px; padding:8px 16px; cursor:pointer; font-weight:600; color:var(--muted); }
+    .tabs button.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:18px; }
+    .stat { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; }
+    .stat small { color:var(--muted); font-weight:600; display:block; }
+    .stat b { font-size:26px; font-family:Fraunces, Georgia, serif; }
+    .panel { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px; }
+    .panel h2 { font-size:19px; margin-bottom:12px; }
+    .tools { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+    .tools input, .tools select { border:1px solid var(--line); border-radius:10px; padding:8px 12px; background:#fff; min-width:0; }
+    .tools input { flex:1 1 200px; }
+    .scroll { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:14px; }
+    th, td { text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); white-space:nowrap; }
+    th { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+    td.wrapcell { white-space:normal; min-width:160px; }
+    tr:last-child td { border-bottom:0; }
+    .mono { font-family: ui-monospace, Consolas, monospace; }
+    .s-verified { background:var(--okbg); color:var(--ok); }
+    .s-unverified { background:var(--warnbg); color:var(--warn); }
+    .s-rejected { background:var(--badbg); color:var(--bad); }
+    .s-test { background:var(--testbg); color:var(--test); }
+    .acts { display:flex; gap:6px; }
+    .empty { color:var(--muted); padding:20px 4px; text-align:center; }
+    .note { background:var(--warnbg); color:var(--warn); border-radius:12px; padding:10px 14px; margin-bottom:14px; font-weight:500; }
+    .bars li { display:flex; align-items:center; gap:10px; margin:6px 0; }
+    .bars ul { list-style:none; padding:0; margin:0; }
+    .bars span:first-child { flex:0 0 40%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .bars i { display:block; height:10px; border-radius:6px; background:var(--accent); }
+    .login { max-width:380px; margin:12vh auto; background:#fff; border:1px solid var(--line); border-radius:20px; padding:28px; }
+    .login h1 { font-size:24px; margin-bottom:6px; }
+    .login p { color:var(--muted); margin:0 0 16px; }
+    .login input { width:100%; border:1px solid var(--line); border-radius:12px; padding:11px 14px; margin-bottom:12px; }
+    .login .btn { width:100%; }
+    .login .show { display:flex; gap:8px; align-items:center; color:var(--muted); font-size:14px; margin:-4px 0 14px; cursor:pointer; }
+    .login .show input { width:auto; margin:0; }
+    .dbnote { background:var(--badbg); color:var(--bad); border-radius:12px; padding:10px 14px; margin-bottom:14px; font-weight:500; }
+    .login .err { color:var(--bad); font-weight:600; min-height:1.4em; margin:8px 0 0; font-size:14px; }
+    .uform { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:8px; margin-bottom:14px; }
+    .uform input { border:1px solid var(--line); border-radius:10px; padding:9px 12px; background:#fff; min-width:0; }
+    .uform .btn { justify-self:start; }
+    .umsg { min-height:1.3em; margin:-6px 0 10px; font-size:14px; font-weight:600; }
+    .umsg.bad { color:var(--bad); } .umsg.good { color:var(--ok); }
+    .me { color:var(--accent); font-weight:700; font-size:12px; margin-left:6px; }
+    td a { color:var(--accent); }
+    .who { color:var(--muted); font-size:14px; font-weight:600; }
+    [hidden] { display:none !important; }
+    @media (max-width:600px) { .top h1 { font-size:22px; } .stat b { font-size:22px; } }
+  </style>
+</head>
+<body>
+  <!-- LOGIN -->
+  <form class="login" id="login">
+    <h1>SBL Admin</h1>
+    <p>Sign in with your admin username and password.</p>
+    <input type="text" id="un" placeholder="Username" autocomplete="username" autocapitalize="off" spellcheck="false" required>
+    <input type="password" id="pw" placeholder="Password" autocomplete="current-password" autocapitalize="off" spellcheck="false" required>
+    <label class="show"><input type="checkbox" id="showPw"> Show password</label>
+    <button class="btn" type="submit">Sign in</button>
+    <p class="err" id="loginErr" role="alert"></p>
+  </form>
+
+  <!-- DASHBOARD -->
+  <div class="wrap" id="app" hidden>
+    <div class="top">
+      <h1><span>SBL</span> Greetings · Admin</h1>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span class="who" id="who"></span>
+        <span class="badge" id="modeBadge"></span>
+        <a class="btn ghost sm" href="/" target="_blank" rel="noopener" style="text-decoration:none">Open website</a>
+        <button class="btn ghost sm" id="refresh" type="button">Refresh</button>
+        <button class="btn ghost sm" id="logout" type="button">Sign out</button>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button type="button" data-tab="overview" class="on">Overview</button>
+      <button type="button" data-tab="payments">Payments</button>
+      <button type="button" data-tab="subscribers">Subscribers</button>
+      <button type="button" data-tab="downloads">Downloads</button>
+      <button type="button" data-tab="users">Users</button>
+    </div>
+
+    <div class="dbnote" id="dbNote" hidden></div>
+
+    <section data-pane="overview">
+      <div class="note" id="checkNote" hidden></div>
+      <div class="grid" id="stats"></div>
+      <div class="panel bars"><h2>Most downloaded posters</h2><div id="top"></div></div>
+    </section>
+
+    <section data-pane="payments" hidden>
+      <div class="panel">
+        <h2>Logo change payments</h2>
+        <div class="tools">
+          <input id="pq" type="search" placeholder="Search reference number or poster">
+          <select id="ps">
+            <option value="">All</option>
+            <option value="unverified">To check</option>
+            <option value="verified">Verified</option>
+            <option value="rejected">Rejected</option>
+            <option value="test">Test</option>
+          </select>
+          <button class="btn ghost sm" type="button" data-export="payments">Export CSV</button>
+        </div>
+        <div class="scroll"><table>
+          <thead><tr><th>#</th><th>Date</th><th>Reference</th><th>Method</th><th>₹</th><th>Poster</th><th>Action</th><th>Status</th><th></th></tr></thead>
+          <tbody id="payRows"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <section data-pane="subscribers" hidden>
+      <div class="panel">
+        <h2>Newsletter subscribers</h2>
+        <div class="tools"><button class="btn ghost sm" type="button" data-export="subscribers">Export CSV</button></div>
+        <div class="scroll"><table>
+          <thead><tr><th>#</th><th>Date</th><th>Email</th><th>Page</th><th></th></tr></thead>
+          <tbody id="subRows"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <section data-pane="downloads" hidden>
+      <div class="panel">
+        <h2>Latest downloads</h2>
+        <div class="tools"><button class="btn ghost sm" type="button" data-export="downloads">Export CSV</button></div>
+        <div class="scroll"><table>
+          <thead><tr><th>#</th><th>Date</th><th>Poster</th><th>Format</th><th>Page</th></tr></thead>
+          <tbody id="dlRows"></tbody>
+        </table></div>
+      </div>
+    </section>
+    <section data-pane="users" hidden>
+      <div class="panel">
+        <h2>Admin users</h2>
+        <p class="who" style="margin:-4px 0 12px">Saved in the MongoDB collection <code>admin_users</code>. Passwords are stored as a secure hash, never as plain text.</p>
+        <form class="uform" id="userForm" autocomplete="off">
+          <input id="nuName" placeholder="Username" autocapitalize="off" spellcheck="false" required>
+          <input id="nuLink" placeholder="URL link (optional)" value="">
+          <input id="nuPw" type="password" placeholder="Password (min 6)" autocomplete="new-password" required>
+          <button class="btn sm" type="submit">Add user</button>
+        </form>
+        <p class="umsg" id="userMsg" role="status"></p>
+        <div class="scroll"><table>
+          <thead><tr><th>#</th><th>Username</th><th>URL link</th><th>Created</th><th>Last sign-in</th><th></th></tr></thead>
+          <tbody id="userRows"></tbody>
+        </table></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+    const $ = (s) => document.querySelector(s);
+    const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const STATUS = { verified: 'Verified', unverified: 'To check', rejected: 'Rejected', test: 'Test' };
+    let TOKEN = '', ME = null;
+    try { TOKEN = sessionStorage.getItem('sblAdminToken') || ''; } catch (e) { /* storage blocked */ }
+    const saveToken = (t) => { TOKEN = t || ''; try { t ? sessionStorage.setItem('sblAdminToken', t) : sessionStorage.removeItem('sblAdminToken'); } catch (e) {} };
+
+    async function api(method, path, data) {
+      let res;
+      try {
+        res = await fetch(path, {
+          method, headers: Object.assign({ 'X-Admin-Token': TOKEN }, data ? { 'Content-Type': 'application/json' } : {}),
+          body: data ? JSON.stringify(data) : undefined
+        });
+      } catch (e) {
+        throw new Error('Cannot reach the server. Make sure backend/app.py is running, then open http://localhost:8000/admin');
+      }
+      if (res.status === 404) throw new Error('This page must be opened from the server: run backend/app.py and go to http://localhost:8000/admin');
+      if (res.status === 401) { const j = await res.json().catch(() => ({})); signOut(j.error || 'Please sign in again.'); throw new Error('auth'); }
+      if (path.includes('/export/')) return res.blob();
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json.ok === false) throw new Error(json.detail || json.error || 'Server error');
+      return json;
+    }
+
+    function signOut(msg) {
+      saveToken(''); ME = null;
+      $('#app').hidden = true; $('#login').hidden = false;
+      $('#loginErr').textContent = msg || '';
+    }
+
+    $('#login').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      $('#loginErr').textContent = '';
+      const btn = $('#login button[type="submit"]');
+      btn.disabled = true; btn.textContent = 'Signing in…';
+      try {
+        let res;
+        try {
+          res = await fetch('/api/admin/login', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: $('#un').value.trim(), password: $('#pw').value.trim() })
+          });
+        } catch (er) {
+          throw new Error('Cannot reach the server. Make sure backend/app.py is running, then open http://localhost:8000/admin');
+        }
+        const json = await res.json().catch(() => null);
+        if (!json) throw new Error('This page must be opened from the server: run backend/app.py and go to http://localhost:8000/admin');
+        if (!res.ok || json.ok === false) throw new Error(json.detail || json.error || 'Sign-in failed (server error ' + res.status + ').');
+        saveToken(json.token);
+        $('#pw').value = '';
+        await openDashboard(json.user);
+      } catch (er) {
+        $('#loginErr').textContent = er.message;
+      } finally { btn.disabled = false; btn.textContent = 'Sign in'; }
+    });
+    $('#showPw').addEventListener('change', (e) => { $('#pw').type = e.target.checked ? 'text' : 'password'; });
+
+    async function openDashboard(user) {
+      ME = user;
+      $('#who').textContent = 'Signed in as ' + user.username;
+      $('#login').hidden = true; $('#app').hidden = false;
+      await loadAll().catch(showErr);
+    }
+
+    $('#logout').onclick = () => signOut('');
+    $('#refresh').onclick = () => loadAll().catch(showErr);
+
+    document.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('[data-tab]').forEach((x) => x.classList.toggle('on', x === b));
+      document.querySelectorAll('[data-pane]').forEach((p) => { p.hidden = p.dataset.pane !== b.dataset.tab; });
+    }));
+
+    function showErr(e) { if (e.message !== 'auth') { const n = $('#dbNote'); n.hidden = false; n.textContent = e.message; } }
+    const money = (n) => '₹' + Number(n || 0).toLocaleString('en-IN');
+
+    async function loadSummary() {
+      const s = await api('GET', '/api/admin/summary');
+      const badge = $('#modeBadge');
+      badge.textContent = s.mode === 'razorpay' ? 'Razorpay · live' : s.test ? 'UPI · test mode' : 'UPI · live';
+      badge.className = 'badge ' + (s.test ? 's-test' : 's-verified');
+      $('#stats').innerHTML = [
+        ['Logo payments', s.payments], ['Money received', money(s.revenue)], ['Verified', money(s.verified)],
+        ['To check', s.toCheck], ['Test payments', s.tests], ['Subscribers', s.subscribers],
+        ['Downloads', s.downloads], ['Downloads today', s.downloadsToday]
+      ].map(([l, v]) => `<div class="stat"><small>${l}</small><b>${esc(v)}</b></div>`).join('');
+      const note = $('#checkNote');
+      note.hidden = !s.toCheck;
+      note.textContent = `${s.toCheck} UPI payment(s) to check: match the reference number in your bank / UPI app, then mark Verified or Rejected on the Payments tab.`;
+      const max = Math.max(1, ...s.topPosters.map((p) => p.total));
+      $('#top').innerHTML = s.topPosters.length
+        ? '<ul>' + s.topPosters.map((p) => `<li><span>${esc(p.poster || '—')}</span><i style="width:${Math.max(4, p.total / max * 50)}%"></i><b>${p.total}</b></li>`).join('') + '</ul>'
+        : '<p class="empty">No downloads yet.</p>';
+    }
+
+    async function loadPayments() {
+      const q = encodeURIComponent($('#pq').value.trim()), st = encodeURIComponent($('#ps').value);
+      const { rows } = await api('GET', `/api/admin/payments?status=${st}&q=${q}`);
+      $('#payRows').innerHTML = rows.length ? rows.map((r) => `
+        <tr>
+          <td>${r.id}</td><td>${esc(r.created_at)}</td><td class="mono">${esc(r.reference)}</td>
+          <td>${esc(r.method)}${r.upi_app ? ' · ' + esc(r.upi_app) : ''}</td><td>${esc(r.amount)}</td>
+          <td class="wrapcell">${esc(r.poster)}</td><td>${esc(r.action)}</td>
+          <td><span class="badge s-${esc(r.status)}">${STATUS[r.status] || esc(r.status)}</span></td>
+          <td><div class="acts">
+            ${r.status !== 'verified' ? `<button class="btn sm" data-set="verified" data-id="${r.id}">Verify</button>` : ''}
+            ${r.status !== 'rejected' ? `<button class="btn ghost sm" data-set="rejected" data-id="${r.id}">Reject</button>` : ''}
+            <button class="btn ghost sm" data-del-pay="${r.id}" title="Delete">✕</button>
+          </div></td>
+        </tr>`).join('') : '<tr><td colspan="9" class="empty">No payments yet.</td></tr>';
+    }
+
+    async function loadSubscribers() {
+      const { rows } = await api('GET', '/api/admin/subscribers');
+      $('#subRows').innerHTML = rows.length ? rows.map((r) => `
+        <tr><td>${r.id}</td><td>${esc(r.created_at)}</td><td>${esc(r.email)}</td><td>${esc(r.page)}</td>
+        <td><button class="btn ghost sm" data-del-sub="${r.id}" title="Delete">✕</button></td></tr>`).join('')
+        : '<tr><td colspan="5" class="empty">No subscribers yet.</td></tr>';
+    }
+
+    async function loadDownloads() {
+      const { rows } = await api('GET', '/api/admin/downloads');
+      $('#dlRows').innerHTML = rows.length ? rows.map((r) => `
+        <tr><td>${r.id}</td><td>${esc(r.created_at)}</td><td class="wrapcell">${esc(r.poster)}</td><td>${esc(r.format)}</td><td>${esc(r.page)}</td></tr>`).join('')
+        : '<tr><td colspan="5" class="empty">No downloads yet.</td></tr>';
+    }
+
+    async function loadUsers() {
+      const { rows, me } = await api('GET', '/api/admin/users');
+      $('#userRows').innerHTML = rows.map((r) => {
+        const link = r.url_link ? `<a href="${esc(r.url_link)}" target="_blank" rel="noopener">${esc(r.url_link)}</a>` : '—';
+        return `<tr>
+          <td>${r.id}</td><td><strong>${esc(r.username)}</strong>${r.id === me ? '<span class="me">you</span>' : ''}</td>
+          <td class="wrapcell">${link}</td><td>${esc(r.created_at)}</td><td>${esc(r.last_login || '—')}</td>
+          <td><div class="acts">
+            <button class="btn ghost sm" data-u-pw="${r.id}" data-name="${esc(r.username)}">Change password</button>
+            <button class="btn ghost sm" data-u-link="${r.id}" data-link="${esc(r.url_link || '')}">Edit link</button>
+            ${r.id !== me ? `<button class="btn ghost sm" data-u-del="${r.id}" data-name="${esc(r.username)}" title="Delete">✕</button>` : ''}
+          </div></td></tr>`;
+      }).join('');
+    }
+    const userMsg = (text, good) => { const m = $('#userMsg'); m.textContent = text; m.className = 'umsg ' + (good ? 'good' : 'bad'); };
+
+    $('#userForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        await api('POST', '/api/admin/users', { username: $('#nuName').value.trim(), password: $('#nuPw').value, url_link: $('#nuLink').value.trim() });
+        userMsg('User "' + $('#nuName').value.trim() + '" added ✓', true);
+        e.target.reset();
+        await loadUsers();
+      } catch (er) { if (er.message !== 'auth') userMsg(er.message); }
+    });
+
+    async function loadAll() {
+      const note = $('#dbNote');
+      try {
+        await loadSummary();
+        await Promise.all([loadPayments(), loadSubscribers(), loadDownloads(), loadUsers()]);
+        note.hidden = true;
+      } catch (e) {
+        if (e.message === 'auth') throw e;
+        note.hidden = false;
+        note.textContent = 'Signed in, but the data could not be loaded: ' + e.message;
+      }
+    }
+
+    let t;
+    $('#pq').addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => loadPayments().catch(showErr), 250); });
+    $('#ps').addEventListener('change', () => loadPayments().catch(showErr));
+
+    document.addEventListener('click', async (e) => {
+      const set = e.target.closest('[data-set]'), dp = e.target.closest('[data-del-pay]'),
+            ds = e.target.closest('[data-del-sub]'), ex = e.target.closest('[data-export]');
+      try {
+        if (set) { await api('PATCH', '/api/admin/payments/' + set.dataset.id, { status: set.dataset.set }); await Promise.all([loadPayments(), loadSummary()]); }
+        if (dp && confirm('Delete this payment record?')) { await api('DELETE', '/api/admin/payments/' + dp.dataset.delPay); await Promise.all([loadPayments(), loadSummary()]); }
+        if (ds && confirm('Delete this subscriber?')) { await api('DELETE', '/api/admin/subscribers/' + ds.dataset.delSub); await Promise.all([loadSubscribers(), loadSummary()]); }
+        const up = e.target.closest('[data-u-pw]'), ul = e.target.closest('[data-u-link]'), ud = e.target.closest('[data-u-del]');
+        if (up) {
+          const pw = prompt('New password for "' + up.dataset.name + '" (at least 6 characters):');
+          if (pw != null && pw.trim()) {
+            const r = await api('PATCH', '/api/admin/users/' + up.dataset.uPw, { password: pw.trim() });
+            if (r.token) saveToken(r.token);          // your own password: stay signed in
+            userMsg('Password changed for "' + up.dataset.name + '" ✓', true);
+          }
+        }
+        if (ul) {
+          const link = prompt('URL link for this user:', ul.dataset.link || 'http://localhost:8000/admin');
+          if (link != null) { await api('PATCH', '/api/admin/users/' + ul.dataset.uLink, { url_link: link.trim() }); await loadUsers(); userMsg('Link saved ✓', true); }
+        }
+        if (ud && confirm('Delete admin user "' + ud.dataset.name + '"?')) {
+          await api('DELETE', '/api/admin/users/' + ud.dataset.uDel); await loadUsers(); userMsg('User deleted', true);
+        }
+        if (ex) {
+          const blob = await api('GET', '/api/admin/export/' + ex.dataset.export);
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob); a.download = ex.dataset.export + '.csv';
+          document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+        }
+      } catch (er) { if (e.target.closest('[data-u-pw],[data-u-link],[data-u-del]')) { if (er.message !== 'auth') userMsg(er.message); } else showErr(er); }
+    });
+
+    if (location.protocol === 'file:') {
+      $('#loginErr').textContent = 'Opened as a file. Run backend/app.py and open http://localhost:8000/admin';
+    } else if (TOKEN) {
+      api('GET', '/api/admin/me').then((r) => openDashboard(r.user)).catch(() => signOut(''));
+    }
+  })();
+  </script>
+</body>
+</html>
