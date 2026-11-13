@@ -29,7 +29,7 @@
     ['Plus Jakarta Sans', 'sans-serif', 'Jakarta · clean']
   ];
   const ROLES = [
-    { role: 'kicker', label: 'Small top line', min: 1.6, max: 8, rows: 1 },
+   <!-- { role: 'kicker', label: 'Small top line', min: 1.6, max: 8, rows: 1 },-->
     { role: 'heading', label: 'Heading', min: 4, max: 24, rows: 2 },
     { role: 'message', label: 'Message', min: 2, max: 8, rows: 3 },
     { role: 'from', label: 'Name', min: 2, max: 10, rows: 1 }
