@@ -29,7 +29,6 @@
     ['Plus Jakarta Sans', 'sans-serif', 'Jakarta · clean']
   ];
   const ROLES = [
-   <!-- { role: 'kicker', label: 'Small top line', min: 1.6, max: 8, rows: 1 },-->
     { role: 'heading', label: 'Heading', min: 4, max: 24, rows: 2 },
     { role: 'message', label: 'Message', min: 2, max: 8, rows: 3 },
     { role: 'from', label: 'Name', min: 2, max: 10, rows: 1 }
@@ -131,6 +130,27 @@
     ['right', '<svg viewBox="0 0 24 24"><path d="M4 6h16M10 11h10M4 16h16M10 21h10"/></svg>', 'Align right']
   ];
 
+  function fontPicker(k) {
+    return `
+      <div class="pe-field">
+        <span class="pe-label">Font</span>
+        <div class="pe-font-select" data-font-picker="${k}">
+          <input type="hidden" data-ctl="${k}.font" value="">
+          <button type="button" class="pe-font-select__btn" aria-haspopup="listbox" aria-expanded="false">
+            <span class="pe-font-select__val"></span>
+            <svg class="pe-font-select__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+          </button>
+          <div class="pe-font-select__menu" role="listbox">
+            ${FONTS.map((f) => `
+              <button type="button" role="option" class="pe-font-select__opt" data-font="${f[0]}" style="font-family:'${f[0]}', ${f[1]};">
+                <span>${f[2]}</span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      </div>`;
+  }
+
   function roleEditor(r, open) {
     const k = r.role;
     return `
@@ -140,8 +160,7 @@
           ${r.rows > 1
             ? `<textarea data-ctl="${k}.text" rows="${r.rows}" aria-label="${r.label} text"></textarea>`
             : `<input type="text" data-ctl="${k}.text" aria-label="${r.label} text">`}
-          <label class="pe-field"><span class="pe-label">Font</span>
-            <select data-ctl="${k}.font">${FONTS.map((f) => `<option value="${f[0]}" style="font-family:'${f[0]}'">${f[2]}</option>`).join('')}</select></label>
+          ${fontPicker(k)}
           ${range(k + '.size', 'Size', r.min, r.max, 0.1)}
           <div class="pe-row pe-row--center">
             ${color(k + '.color', 'Colour')}
@@ -358,6 +377,23 @@
       b.setAttribute('aria-pressed', String(on));
     });
     $$('[data-out]').forEach((o) => { o.textContent = read(o.dataset.out); });
+    $$('[data-font-picker]').forEach((p) => {
+      const role = p.dataset.fontPicker;
+      const val = read(role + '.font');
+      const f = FONTS.find((x) => x[0] === val) || FONTS[0];
+      const valSpan = p.querySelector('.pe-font-select__val');
+      const input = p.querySelector('input[data-ctl]');
+      if (input) input.value = f[0];
+      if (valSpan) {
+        valSpan.textContent = f[2];
+        valSpan.style.fontFamily = `'${f[0]}', ${f[1]}`;
+      }
+      p.querySelectorAll('.pe-font-select__opt').forEach((opt) => {
+        const isSel = opt.dataset.font === f[0];
+        opt.classList.toggle('is-selected', isSel);
+        opt.setAttribute('aria-selected', String(isSel));
+      });
+    });
     $$('[data-preview-text]').forEach((s) => { s.textContent = read(s.dataset.previewText + '.text').replace(/\n/g, ' ').slice(0, 28); });
     const bg = part('bg');
     $$('[data-bg-src]').forEach((b) => b.classList.toggle('is-on', bg && bg.getAttribute('src') === b.dataset.bgSrc));
@@ -566,6 +602,48 @@
       if (c.type === 'checkbox' && c.dataset.ctl) { write(c.dataset.ctl, c.checked); sync(); }
     });
     root.addEventListener('click', (e) => {
+      const fontBtn = e.target.closest('.pe-font-select__btn');
+      if (fontBtn) {
+        const picker = fontBtn.closest('.pe-font-select');
+        const isOpen = picker.classList.contains('is-open');
+        $$('.pe-font-select.is-open').forEach((p) => {
+          p.classList.remove('is-open');
+          const b = p.querySelector('.pe-font-select__btn');
+          if (b) b.setAttribute('aria-expanded', 'false');
+          const blk = p.closest('.pe-block');
+          if (blk) blk.style.zIndex = '';
+        });
+        if (!isOpen) {
+          picker.classList.add('is-open');
+          fontBtn.setAttribute('aria-expanded', 'true');
+          const blk = picker.closest('.pe-block');
+          if (blk) blk.style.zIndex = '30';
+        }
+        return;
+      }
+      const fontOpt = e.target.closest('.pe-font-select__opt');
+      if (fontOpt) {
+        const picker = fontOpt.closest('.pe-font-select');
+        const role = picker.dataset.fontPicker;
+        const fontName = fontOpt.dataset.font;
+        write(role + '.font', fontName);
+        sync();
+        picker.classList.remove('is-open');
+        const b = picker.querySelector('.pe-font-select__btn');
+        if (b) b.setAttribute('aria-expanded', 'false');
+        const blk = picker.closest('.pe-block');
+        if (blk) blk.style.zIndex = '';
+        return;
+      }
+      if (!e.target.closest('.pe-font-select')) {
+        $$('.pe-font-select.is-open').forEach((p) => {
+          p.classList.remove('is-open');
+          const b = p.querySelector('.pe-font-select__btn');
+          if (b) b.setAttribute('aria-expanded', 'false');
+          const blk = p.closest('.pe-block');
+          if (blk) blk.style.zIndex = '';
+        });
+      }
       const opt = e.target.closest('[data-seg] [data-value]');
       if (opt) { write(opt.closest('[data-seg]').dataset.seg, opt.dataset.value); sync(); if (opt.closest('[data-seg]').dataset.seg.endsWith('.pos')) mark(opt); return; }
       const flag = e.target.closest('[data-flag]');
@@ -623,6 +701,11 @@
   }
 
   function showTab(name) {
+    $$('.pe-font-select.is-open').forEach((p) => {
+      p.classList.remove('is-open');
+      const blk = p.closest('.pe-block');
+      if (blk) blk.style.zIndex = '';
+    });
     $$('[data-tab]').forEach((t) => t.setAttribute('aria-selected', String(t.dataset.tab === name)));
     $$('[data-pane]').forEach((p) => p.classList.toggle('is-active', p.dataset.pane === name));
     $('.pe__scroll').scrollTop = 0;
@@ -719,6 +802,11 @@
     if (!root) return;
     if ((LOGO.paid || LOGO.credit) && !LOGO.saved && root.classList.contains('is-open') &&
       !window.confirm('You paid for a logo change on this poster but have not downloaded it yet.\n\nClose without downloading?')) return;
+    $$('.pe-font-select.is-open').forEach((p) => {
+      p.classList.remove('is-open');
+      const blk = p.closest('.pe-block');
+      if (blk) blk.style.zIndex = '';
+    });
     root.classList.remove('is-open', 'is-full');
     document.body.classList.remove('pe-open');
     if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
