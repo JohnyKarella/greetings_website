@@ -154,6 +154,7 @@
 }
 .poster__text > :last-child { margin-bottom: 0; }
 .poster__text > :empty { display: none; }
+.poster__kicker { display: none !important; }
 
 /* Heading effects */
 .poster__text [data-effect="shadow"] { text-shadow: 0 0.5cqw 1.2cqw rgba(31, 26, 46, 0.4); }
