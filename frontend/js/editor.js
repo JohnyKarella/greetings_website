@@ -263,10 +263,6 @@
               </section>
 
               <section class="pe__pane" data-pane="logo">
-                ${Pay() ? '<div class="pe-paid" data-logo-note></div>' : ''}
-                ${uploadField('logo', Pay() ? 'Use your own logo' : 'Upload your logo', Pay() ? `${FEE()} per logo · JPG or PNG` : '')}
-                ${toggle('logo.on', 'Show logo')}
-                ${toggle('logo.badge', 'White badge behind logo')}
                 ${range('logo.w', 'Logo size', 5, 32, 0.5, '%')}
                 <div class="pe-place">
                   <div><span class="pe-label">Placement</span>${grid('logo.pos', 'Logo placement')}</div>
@@ -275,6 +271,10 @@
                     ${range('logo.y', 'Up ↕ down', 0, 100, 1, '%')}
                   </div>
                 </div>
+                ${toggle('logo.on', 'Show logo')}
+                ${toggle('logo.badge', 'White badge behind logo')}
+                ${Pay() ? '<div class="pe-paid" data-logo-note></div>' : ''}
+                ${uploadField('logo', Pay() ? 'Use your own logo' : 'Upload your logo', Pay() ? `${FEE()} per logo · JPG or PNG` : '')}
               </section>
 
               <section class="pe__pane" data-pane="bg">
