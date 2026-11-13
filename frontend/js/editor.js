@@ -93,7 +93,12 @@
   function textOf(el) {
     const c = el.cloneNode(true);
     c.querySelectorAll('br').forEach((br) => br.replaceWith('\n'));
-    return c.textContent;
+    return c.textContent
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line, i, arr) => line.length > 0 || (i > 0 && i < arr.length - 1))
+      .join('\n')
+      .trim();
   }
   function setText(el, value) {
     el.innerHTML = '';
