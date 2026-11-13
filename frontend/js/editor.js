@@ -227,8 +227,8 @@
 
             <div class="pe__scroll">
               <section class="pe__pane is-active" data-pane="text">
-                ${ROLES.map((r, i) => roleEditor(r, i < 2)).join('')}
-                <details class="pe-block" open>
+                ${ROLES.map((r) => roleEditor(r, false)).join('')}
+                <details class="pe-block">
                   <summary><span>Text placement</span></summary>
                   <div class="pe-block__body">
                     ${seg('text.pos', [['top', 'Top'], ['middle', 'Middle'], ['bottom', 'Bottom']], 'Text position')}
@@ -787,14 +787,15 @@
     };
     root.classList.add('is-open');
     document.body.classList.add('pe-open');
+    root.querySelectorAll('.pe-block').forEach((b) => { b.open = false; });
     backgrounds();
     mount(sourceHTML);
     showTab('text');
     lastFocus = document.activeElement;
     requestAnimationFrame(fit);
     setTimeout(() => {
-      const first = window.innerWidth > 900 ? $('[data-ctl="heading.text"]') : $('.pe__bar .icon-btn');
-      if (first) first.focus({ preventScroll: true });
+      const closeBtn = $('.pe__bar .icon-btn');
+      if (closeBtn) closeBtn.focus({ preventScroll: true });
     }, 80);
   }
 
