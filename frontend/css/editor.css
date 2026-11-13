@@ -357,6 +357,127 @@ body.pe-open {
   cursor: pointer;
 }
 
+/* Custom Font Select (renders real font styles on iOS, Android & Desktop) */
+.pe-font-select {
+  position: relative;
+  width: 100%;
+}
+
+.pe-font-select__btn {
+  width: 100%;
+  min-height: 46px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.95rem;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.pe-font-select__btn:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 4px rgba(124, 92, 230, 0.15);
+}
+
+.pe-font-select.is-open .pe-font-select__btn {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 4px rgba(124, 92, 230, 0.15);
+}
+
+.pe-font-select__val {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1.05rem;
+}
+
+.pe-font-select__arrow {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.pe-font-select.is-open .pe-font-select__arrow {
+  transform: rotate(180deg);
+}
+
+.pe-font-select__menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 12px 30px -8px rgba(31, 26, 46, 0.25), 0 4px 12px rgba(31, 26, 46, 0.08);
+  -webkit-overflow-scrolling: touch;
+  padding: 0.35rem 0;
+}
+
+.pe-font-select.is-open .pe-font-select__menu {
+  display: block;
+}
+
+.pe-font-select__opt {
+  width: 100%;
+  padding: 0.65rem 0.95rem;
+  font-size: 1.15rem;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #1f1a2e;
+  transition: background 0.15s ease, color 0.15s ease;
+  line-height: 1.3;
+}
+
+.pe-font-select__opt:hover,
+.pe-font-select__opt:focus {
+  background: rgba(124, 92, 230, 0.08);
+  outline: none;
+}
+
+.pe-font-select__opt.is-selected {
+  background: rgba(124, 92, 230, 0.12);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.pe-font-select__opt.is-selected::after {
+  content: "✓";
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--primary);
+  margin-left: 0.5rem;
+}
+
+.pe-block[open] {
+  overflow: visible;
+}
+
 .pe-field input:focus,
 .pe-field textarea:focus,
 .pe-field select:focus {
