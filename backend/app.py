@@ -85,7 +85,8 @@ import time  # noqa: E402
 import urllib.error  # noqa: E402
 import urllib.request  # noqa: E402
 import webbrowser  # noqa: E402
-from datetime import datetime  # noqa: E402
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo # noqa: E402
 from flask import Flask, Response, abort, jsonify, request, send_from_directory  # noqa: E402
 from pymongo.errors import DuplicateKeyError, PyMongoError  # noqa: E402
 
@@ -152,11 +153,17 @@ def client_ip():
 
 
 def plain(row):
-    """Make database rows JSON friendly."""
+    """Make database rows JSON friendly using Indian time."""
     out = {}
     for k, v in row.items():
         if isinstance(v, datetime):
-            v = v.astimezone().strftime("%Y-%m-%d %H:%M:%S")
+            if v.tzinfo is None:
+                v = v.replace(tzinfo=timezone.utc)
+
+            v = v.astimezone(
+                ZoneInfo("Asia/Kolkata")
+            ).strftime("%Y-%m-%d %H:%M:%S")
+
         out[k] = v
     return out
 
