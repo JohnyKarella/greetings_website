@@ -160,12 +160,12 @@ def plain(row):
             if v.tzinfo is None:
                 v = v.replace(tzinfo=timezone.utc)
 
-            v = v.astimezone(
-                ZoneInfo("Asia/Kolkata")
-            ).strftime("%Y-%m-%d   %I:%M:%S %p")
+          v = v.astimezone(
+    ZoneInfo("Asia/Kolkata")
+).strftime("%Y-%m-%d   %I:%M:%S %p")
 
-        out[k] = v
-    return out
+out[k] = v
+return out
 
 
 # Very small "too many tries" guard for the payment form (per visitor IP).
