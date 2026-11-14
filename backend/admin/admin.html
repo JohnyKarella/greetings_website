@@ -38,6 +38,8 @@
     .scroll { overflow-x:auto; }
     table { width:100%; border-collapse:collapse; font-size:14px; }
     th, td { text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); white-space:nowrap; }
+    .downloads-date { padding-right:24px; }
+    .downloads-time { padding-left:24px; }
     th { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
     td.wrapcell { white-space:normal; min-width:160px; }
     tr:last-child td { border-bottom:0; }
@@ -152,7 +154,7 @@
         <h2>Latest downloads</h2>
         <div class="tools"><button class="btn ghost sm" type="button" data-export="downloads">Export CSV</button></div>
         <div class="scroll"><table>
-          <thead><tr><th>#</th><th>Date</th><th>Poster</th><th>Format</th><th>Page</th></tr></thead>
+          <thead><tr><th>#</th><th class="downloads-date">Date</th><th class="downloads-time">Time</th><th>Poster</th><th>Format</th><th>Page</th></tr></thead>
           <tbody id="dlRows"></tbody>
         </table></div>
       </div>
@@ -254,6 +256,11 @@
 
     function showErr(e) { if (e.message !== 'auth') { const n = $('#dbNote'); n.hidden = false; n.textContent = e.message; } }
     const money = (n) => '₹' + Number(n || 0).toLocaleString('en-IN');
+    function splitDateTime(value) {
+      const text = String(value || '');
+      const match = text.match(/^(\\d{4}-\\d{2}-\\d{2})\\s+(.+)$/);
+      return match ? [match[1], match[2]] : [text || '—', '—'];
+    }
 
     async function loadSummary() {
       const s = await api('GET', '/api/admin/summary');
@@ -301,9 +308,17 @@
 
     async function loadDownloads() {
       const { rows } = await api('GET', '/api/admin/downloads');
-      $('#dlRows').innerHTML = rows.length ? rows.map((r) => `
-        <tr><td>${r.id}</td><td>${esc(r.created_at)}</td><td class="wrapcell">${esc(r.poster)}</td><td>${esc(r.format)}</td><td>${esc(r.page)}</td></tr>`).join('')
-        : '<tr><td colspan="5" class="empty">No downloads yet.</td></tr>';
+      $('#dlRows').innerHTML = rows.length ? rows.map((r) => {
+        const [date, time] = splitDateTime(r.created_at);
+        return `<tr>
+          <td>${r.id}</td>
+          <td class="downloads-date">${esc(date)}</td>
+          <td class="downloads-time">${esc(time)}</td>
+          <td class="wrapcell">${esc(r.poster)}</td>
+          <td>${esc(r.format)}</td>
+          <td>${esc(r.page)}</td>
+        </tr>`;
+      }).join('') : '<tr><td colspan="6" class="empty">No downloads yet.</td></tr>';
     }
 
     async function loadUsers() {
