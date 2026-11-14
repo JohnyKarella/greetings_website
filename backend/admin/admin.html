@@ -258,7 +258,7 @@
     const money = (n) => '₹' + Number(n || 0).toLocaleString('en-IN');
     function splitDateTime(value) {
       const text = String(value || '');
-      const match = text.match(/^(\\d{4}-\\d{2}-\\d{2})\\s+(.+)$/);
+      const match = text.match(/^(\d{4}-\d{2}-\d{2})[T\s]+(.+)$/);
       return match ? [match[1], match[2]] : [text || '—', '—'];
     }
 
