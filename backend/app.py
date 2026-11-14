@@ -162,7 +162,7 @@ def plain(row):
 
             v = v.astimezone(
                 ZoneInfo("Asia/Kolkata")
-            ).strftime("%Y-%m-%d %I:%M:%S %p")
+            ).strftime("%Y-%m-%d   %I:%M:%S %p")
 
         out[k] = v
     return out
